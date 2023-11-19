@@ -6,7 +6,7 @@ fun main() {
     println("3. Checking account")
 
     var accountType = ""
-    var userChoice = 0
+    var userChoice: Int
 
     while (accountType == "") {
         println("Choose an option (1, 2 or 3)")
@@ -24,21 +24,15 @@ fun main() {
     println("You have created a $accountType account")
 
     var accountBalance: Int = (0 .. 1000).random()
-    println("The current balance is $accountBalance dollars.")
-
-    val money: Int = (0 .. 1000).random()
+    println("The checking balance is $accountBalance dollars.")
+    val money = (0..1000).random()
     println("The amount you transferred is $money dollars.")
-
-    var output = 0
 
     fun withdraw(amount: Int): Int {
         accountBalance -= amount
         println("You successfully withdrew $amount dollars. The current balance is $accountBalance dollars.")
         return amount
     }
-
-    output = withdraw(money)
-    println("The amount you withdrew is $output dollars.")
 
     fun debitWithdraw(amount: Int): Int {
         if (accountBalance == 0) {
@@ -51,17 +45,11 @@ fun main() {
         return withdraw(amount)
     }
 
-    output = debitWithdraw(money)
-    println("The amount you withdrew is $output dollars.")
-
     fun deposit(amount: Int): Int {
         accountBalance += amount
         println("You successfully deposited $amount dollars. The current balance is $accountBalance dollars.")
         return amount
     }
-
-    output = deposit(money)
-    println("The amount you deposited is $output dollars.")
 
     fun creditDeposit(amount: Int): Int {
         return if (accountBalance == 0) {
@@ -78,6 +66,53 @@ fun main() {
         }
     }
 
-    output = creditDeposit(money)
-    println("The amount you deposited is $output dollars.")
+    fun transfer(mode: String) {
+        val transferAmount: Int
+
+        when(mode) {
+            "withdraw" -> {
+                transferAmount = if (accountType == "debit") {
+                    debitWithdraw(money)
+                } else {
+                    withdraw(money)
+                }
+                println("The amount you withdrew is $transferAmount dollars. ")
+            }
+            "deposit" -> {
+                transferAmount = if (accountType == "credit") {
+                    creditDeposit(money)
+                } else {
+                    deposit(money)
+                }
+                println("The amount you deposited is $transferAmount dollars.")
+            }
+            else -> return
+        }
+    }
+
+    var isSystemOpen = true
+    var option: Int
+
+    while (isSystemOpen) {
+        println("What would you like to do?")
+        println("1. Check bank account balance")
+        println("2. Withdraw money")
+        println("3. Deposit money")
+        println("4. Close the app")
+        println("Which option do you choose? (1, 2, 3 or 4)")
+
+        option = (1 .. 10).random()
+        println("You pick the choice $option")
+
+        when(option) {
+            1 -> println("The current balance is $accountBalance dollars.")
+            2 -> transfer("withdraw")
+            3 -> transfer("deposit")
+            4 -> {
+                println("The system is closed")
+                isSystemOpen = false
+            }
+            else -> continue
+        }
+    }
 }
